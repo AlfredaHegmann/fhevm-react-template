@@ -275,7 +275,7 @@ npm install
 npm run dev
 ```
 
-**Live Demo**: [https://private-freight-bidding.vercel.app/](https://private-freight-bidding.vercel.app/)
+**Live Demo**: [https://fhe-freight-bidding-enhanced.vercel.app/](https://fhe-freight-bidding-enhanced.vercel.app/)
 
 ### Example 2: Basic Next.js Template
 
@@ -298,7 +298,9 @@ export default function Home() {
 
 ## 🎬 Video Demo
 
-**Watch the SDK in action**: [`demo.mp4`](demo.mp4)
+**File**: `demo.mp4` - Download this file to watch the SDK demonstration
+
+**Live Example**: [https://fhe-freight-bidding-enhanced.vercel.app/](https://fhe-freight-bidding-enhanced.vercel.app/)
 
 **Contents**:
 - 🎥 Quick start demonstration (< 5 lines)
@@ -306,6 +308,8 @@ export default function Home() {
 - 💼 Real-world use case (Freight Bidding)
 - 🔧 Design decisions and architecture
 - 📊 Comparison with current approach
+
+**Note**: The demo video file must be downloaded to view. Video files cannot be opened directly through web links.
 
 ---
 
@@ -455,15 +459,15 @@ fhevm-react-template/
 
 ### Example Deployments
 
-**Freight Bidding Platform**: [https://private-freight-bidding.vercel.app/](https://private-freight-bidding.vercel.app/)
+**Freight Bidding Platform**: [https://fhe-freight-bidding-enhanced.vercel.app/](https://fhe-freight-bidding-enhanced.vercel.app/)
 - Live demonstration of SDK in production
 - Real encrypted bidding with FHEVM
 - Deployed on Vercel
 
-**Smart Contract**: [`0x9E6B9F8afcC5A6E98A8d9967f2cA2edb3C191576`](https://sepolia.etherscan.io/address/0x9E6B9F8afcC5A6E98A8d9967f2cA2edb3C191576)
+**Smart Contract**: [`0x2E7B5f277595e3F1eeB9548ef654E178537cb90E`](https://sepolia.etherscan.io/address/0x2E7B5f277595e3F1eeB9548ef654E178537cb90E)
 - Sepolia Testnet
 - Full FHE encryption
-- Gateway callbacks enabled
+- Privacy-preserving price matching
 
 ---
 
@@ -515,10 +519,12 @@ for building confidential dApps with Zama FHEVM.
 ## 🔗 Links
 
 - **npm Package**: [@fhevm/sdk](https://www.npmjs.com/package/@fhevm/sdk) (coming soon)
-- **GitHub**: [fhevm-react-template](https://github.com/AlfredaHegmann/fhevm-react-template)
-- **Live Demo**: [Private Freight Bidding](https://private-freight-bidding.vercel.app/)
+- **GitHub Repository**: [fhevm-react-template](https://github.com/AlfredaHegmann/fhevm-react-template)
+- **Live Demo**: [FHE Freight Bidding Platform](https://fhe-freight-bidding-enhanced.vercel.app/)
+- **Example Project**: [FHEFreightBiddingEnhanced](https://github.com/AlfredaHegmann/FHEFreightBiddingEnhanced)
+- **Smart Contract**: [0x2E7B5f277595e3F1eeB9548ef654E178537cb90E](https://sepolia.etherscan.io/address/0x2E7B5f277595e3F1eeB9548ef654E178537cb90E)
+- **Demo Video**: `demo.mp4` (download from repository)
 - **Zama Docs**: [docs.zama.ai/fhevm](https://docs.zama.ai/fhevm)
-- **Video Demo**: [demo.mp4](demo.mp4)
 
 ---
 
