@@ -10,6 +10,18 @@
 
 ---
 
+## 🎬 Video Demo
+
+**File**: `demo.mp4` - Watch the complete platform demonstration
+
+**Live Example**: [https://private-freight-bidding.vercel.app/](https://private-freight-bidding.vercel.app/)
+
+**Note**: Download the video file to watch the demonstration locally.
+
+---
+
+---
+
 ## 🎯 What is This?
 
 A **universal, wagmi-like SDK** that wraps all FHEVM dependencies into one clean package. Works with **React, Vue, Node.js, Next.js**, or any JavaScript environment.
@@ -304,15 +316,18 @@ npm run dev
 
 ### Example 2: Next.js 14 Template with Comprehensive FHE Integration
 
-Production-ready Next.js 14 template demonstrating complete SDK integration with App Router, API routes, and advanced FHE features.
+Production-ready Next.js 14 template demonstrating complete SDK integration with App Router, API routes, and advanced FHE features following the structure outlined in the Zama bounty requirements.
 
-**Location**: [`examples/nextjs/`](examples/nextjs/)
+**Location**: [`examples/nextjs/`](examples/nextjs/) | **Templates Reference**: [`templates/`](templates/)
 
 **What This Shows**:
-- Complete Next.js 14 App Router integration
-- React hooks (`useFhevm`, `useEncrypt`)
-- API routes for server-side FHE operations
-- Custom hooks and components
+- Complete Next.js 14 App Router integration with full SDK structure
+- Server-side and client-side FHE operations
+- API routes for encryption, decryption, and homomorphic computation
+- Comprehensive component library with FHE providers and examples
+- Custom hooks for encryption and computation operations
+- Utility libraries for security and validation
+- Real-world use cases (Banking, Medical records)
 - Built-in loading and error states
 - Full TypeScript type safety
 - Production-ready architecture
@@ -376,129 +391,159 @@ examples/nextjs/
 
 ---
 
-#### 🚀 Quick Start Example
+#### 🚀 Complete Application Example
 
-**Main Page** (`app/page.tsx`):
+**Main Page** (`app/page.tsx`) - Now includes all demonstration components:
 ```typescript
 'use client';
 
-import { useFhevm, useEncrypt } from '@fhevm/sdk/react';
-import { useState } from 'react';
+import React from 'react';
+import { FHEProvider } from '../components/fhe/FHEProvider';
+import { EncryptionDemo } from '../components/fhe/EncryptionDemo';
+import { ComputationDemo } from '../components/fhe/ComputationDemo';
+import { KeyManager } from '../components/fhe/KeyManager';
+import { BankingExample } from '../components/examples/BankingExample';
+import { MedicalExample } from '../components/examples/MedicalExample';
 
 export default function Home() {
-  const [inputValue, setInputValue] = useState('1000');
-  const [encryptedValue, setEncryptedValue] = useState('');
-
-  // Initialize FHEVM with the SDK hook
-  const { fhevm, isReady, error } = useFhevm({ chainId: 8009 });
-
-  // Use encryption hook with loading states
-  const { encrypt, isEncrypting, error: encryptError } = useEncrypt(fhevm);
-
-  const handleEncrypt = async () => {
-    const encrypted = await encrypt(Number(inputValue), {
-      type: 'euint64'
-    });
-    setEncryptedValue(encrypted.value);
-  };
-
-  if (!isReady) return <div>Loading FHEVM SDK...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
   return (
-    <main className="min-h-screen p-24">
-      <h1 className="text-4xl font-bold mb-8">
-        🔐 FHEVM SDK Example
-      </h1>
+    <FHEProvider chainId={8009}>
+      <main className="min-h-screen p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <h1 className="text-5xl font-bold mb-4 text-white">
+            🔐 FHEVM SDK Complete Example
+          </h1>
 
-      <div className="space-y-4">
-        <input
-          type="number"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg"
-        />
-
-        <button
-          onClick={handleEncrypt}
-          disabled={isEncrypting}
-          className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg"
-        >
-          {isEncrypting ? 'Encrypting...' : 'Encrypt with FHEVM'}
-        </button>
-
-        {encryptedValue && (
-          <div className="p-4 bg-green-50 rounded-lg">
-            <p className="font-mono text-xs break-all">
-              {encryptedValue}
-            </p>
+          {/* Quick Start Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <EncryptionDemo />
+            <KeyManager />
           </div>
-        )}
-      </div>
-    </main>
+
+          {/* Computation Section */}
+          <div className="mb-8">
+            <ComputationDemo />
+          </div>
+
+          {/* Real-World Examples */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <BankingExample />
+            <MedicalExample />
+          </div>
+        </div>
+      </main>
+    </FHEProvider>
   );
 }
 ```
 
+**Features Demonstrated**:
+- FHE Provider for global state management
+- Encryption demo with type selection
+- Homomorphic computation interface
+- Key management utilities
+- Banking use case (private transactions)
+- Medical use case (confidential health records)
+
 ---
 
-#### 🔌 API Route Example
+#### 🔌 API Routes Examples
 
 **Encryption Endpoint** (`app/api/fhe/encrypt/route.ts`):
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { quickStart } from '@fhevm/sdk';
+import { createFhevmInstance, encryptData } from '@fhevm/sdk';
 
 export async function POST(request: NextRequest) {
   try {
-    const { value, type } = await request.json();
+    const { value, type = 'euint64', chainId = 8009 } = await request.json();
 
-    // Initialize FHEVM on server-side
-    const fhevm = await quickStart(8009);
+    // Initialize FHEVM instance
+    const fhevm = await createFhevmInstance({ chainId });
 
-    // Encrypt the value
-    const encrypted = await fhevm.encrypt64(BigInt(value));
+    // Encrypt the data
+    const encrypted = await encryptData(fhevm, value, { type });
 
     return NextResponse.json({
       success: true,
-      encrypted: encrypted.toString(),
+      encrypted: encrypted.value,
+      type,
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     return NextResponse.json({
-      success: false,
-      error: error.message,
+      error: 'Encryption failed',
+      message: error.message,
     }, { status: 500 });
   }
 }
 ```
 
+**Available API Endpoints**:
+- `/api/fhe` - General FHE operations
+- `/api/fhe/encrypt` - Encryption endpoint (supports batch operations)
+- `/api/fhe/decrypt` - Decryption requests with EIP-712 signature support
+- `/api/fhe/compute` - Homomorphic computation preparation
+- `/api/keys` - Public key management and retrieval
+
 ---
 
-#### 🎣 Custom Hooks Example
+#### 🎣 Custom Hooks Examples
 
 **FHE Hook** (`hooks/useFHE.ts`):
 ```typescript
 import { useState, useEffect } from 'react';
-import { useFhevm } from '@fhevm/sdk/react';
+import { createFhevmInstance, type FhevmInstance } from '@fhevm/sdk';
 
 export function useFHE(chainId: number = 8009) {
-  const { fhevm, isReady, error } = useFhevm({ chainId });
-  const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [fhevm, setFhevm] = useState<FhevmInstance | null>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (isReady && fhevm) {
-      setPublicKey(fhevm.getPublicKey());
-    }
-  }, [isReady, fhevm]);
+    const initialize = async () => {
+      try {
+        const instance = await createFhevmInstance({ chainId });
+        setFhevm(instance);
+        setIsReady(true);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Initialization failed'));
+      }
+    };
+    initialize();
+  }, [chainId]);
 
-  return {
-    fhevm,
-    isReady,
-    error,
-    publicKey,
-  };
+  return { fhevm, isReady, error, publicKey: fhevm?.publicKey || null };
 }
 ```
+
+**Encryption Hook** (`hooks/useEncryption.ts`):
+```typescript
+import { useState, useCallback } from 'react';
+import { encryptData, type FhevmInstance } from '@fhevm/sdk';
+
+export function useEncryption(fhevm: FhevmInstance | null) {
+  const [isEncrypting, setIsEncrypting] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const encrypt = useCallback(async (value: number, type = 'euint64') => {
+    if (!fhevm) throw new Error('FHEVM not initialized');
+
+    setIsEncrypting(true);
+    try {
+      return await encryptData(fhevm, value, { type });
+    } finally {
+      setIsEncrypting(false);
+    }
+  }, [fhevm]);
+
+  return { encrypt, isEncrypting, error };
+}
+```
+
+**Computation Hook** (`hooks/useComputation.ts`):
+Provides utilities for preparing homomorphic computation operations on encrypted data.
 
 ---
 
@@ -508,23 +553,54 @@ export function useFHE(chainId: number = 8009) {
 ```typescript
 'use client';
 
-import { createContext, useContext, ReactNode } from 'react';
-import { useFhevm } from '@fhevm/sdk/react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createFhevmInstance, type FhevmInstance } from '@fhevm/sdk';
 
-const FHEContext = createContext<any>(null);
+const FHEContext = createContext<{
+  fhevm: FhevmInstance | null;
+  isReady: boolean;
+  error: Error | null;
+} | undefined>(undefined);
 
-export function FHEProvider({ children }: { children: ReactNode }) {
-  const fhevm = useFhevm({ chainId: 8009 });
+export function FHEProvider({ children, chainId = 8009 }: {
+  children: React.ReactNode;
+  chainId?: number;
+}) {
+  const [fhevm, setFhevm] = useState<FhevmInstance | null>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const initializeFhevm = async () => {
+      try {
+        const instance = await createFhevmInstance({ chainId });
+        setFhevm(instance);
+        setIsReady(true);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to initialize FHEVM'));
+      }
+    };
+    initializeFhevm();
+  }, [chainId]);
 
   return (
-    <FHEContext.Provider value={fhevm}>
+    <FHEContext.Provider value={{ fhevm, isReady, error }}>
       {children}
     </FHEContext.Provider>
   );
 }
 
-export const useFHEContext = () => useContext(FHEContext);
+export const useFHEContext = () => {
+  const context = useContext(FHEContext);
+  if (!context) throw new Error('useFHEContext must be used within FHEProvider');
+  return context;
+};
 ```
+
+**Component Library**:
+- `components/ui/` - Base UI components (Button, Input, Card)
+- `components/fhe/` - FHE-specific components (EncryptionDemo, ComputationDemo, KeyManager)
+- `components/examples/` - Real-world use cases (BankingExample, MedicalExample)
 
 ---
 
@@ -537,20 +613,33 @@ npm run dev
 # Visit http://localhost:3000
 ```
 
+**What You'll See**:
+- Interactive encryption demo
+- Public key management interface
+- Homomorphic computation examples
+- Banking use case (encrypted transactions)
+- Medical use case (confidential health records)
+- API endpoint documentation
+- Complete SDK integration examples
+
 ---
 
 #### 🎯 Key Features Demonstrated
 
 | Feature | Implementation | Location |
 |---------|---------------|----------|
-| **Client-side Encryption** | React hooks with SDK | `app/page.tsx` |
-| **Server-side Operations** | API routes with quickStart | `app/api/fhe/` |
-| **Custom Hooks** | Reusable FHE logic | `hooks/useFHE.ts` |
-| **Context Provider** | Global FHE state | `components/fhe/FHEProvider.tsx` |
-| **Type Safety** | Full TypeScript support | `types/fhe.ts` |
+| **Client-side Encryption** | React components with SDK | `app/page.tsx` |
+| **Server-side Operations** | API routes with SDK functions | `app/api/fhe/*` |
+| **Custom Hooks** | Reusable FHE logic | `hooks/useFHE.ts`, `hooks/useEncryption.ts`, `hooks/useComputation.ts` |
+| **Context Provider** | Global FHE state management | `components/fhe/FHEProvider.tsx` |
+| **UI Components** | Reusable component library | `components/ui/*` |
+| **FHE Components** | Encryption, computation, keys | `components/fhe/*` |
+| **Type Safety** | Full TypeScript support | `types/fhe.ts`, `types/api.ts` |
+| **Utilities** | Security & validation helpers | `lib/utils/*` |
+| **FHE Libraries** | Client/server operations | `lib/fhe/*` |
 | **Error Handling** | Automatic error states | Built-in hooks |
-| **Loading States** | Built-in loading indicators | `isReady`, `isEncrypting` |
-| **Real-world Examples** | Banking & medical use cases | `components/examples/` |
+| **Loading States** | Built-in loading indicators | `isReady`, `isEncrypting`, `isComputing` |
+| **Real-world Examples** | Banking & medical use cases | `components/examples/*` |
 
 ---
 
@@ -567,32 +656,7 @@ npm run dev
 | **API Integration** | Complex setup | Simple with `quickStart()` |
 | **Development Time** | 2-3 days | < 1 hour |
 
----
 
-## 🎬 Video Demo
-
-**File**: `examples/freight-bidding/PrivateFreightBidding.mp4` - Watch the complete platform demonstration
-
-**Live Example**: [https://private-freight-bidding.vercel.app/](https://private-freight-bidding.vercel.app/)
-
-**Demo Contents**:
-- 🎥 Quick start demonstration (< 5 lines of code)
-- 🔐 FHE encryption in React with SDK hooks
-- 💼 Real-world freight bidding use case
-- 🔧 Architecture and design decisions
-- 📊 Before/After SDK comparison
-- 🛡️ Privacy features and security guarantees
-
-**Platform Features Shown**:
-- Complete workflow from job posting to bid submission
-- Encrypted bid prices using homomorphic encryption
-- Anonymous competition between carriers
-- Gateway decryption callbacks
-- Smart contract interaction with Web3
-
-**Note**: Download the video file to watch the demonstration locally.
-
----
 
 ## 💡 SDK Integration Examples
 
@@ -822,6 +886,8 @@ fhevm-react-template/
 │       │   └── index.ts                        # Main exports
 │       ├── package.json
 │       └── tsconfig.json
+├── templates/                                  # Template reference directory
+│   └── README.md                               # Templates documentation
 ├── examples/
 │   ├── freight-bidding/                        # Complete platform example
 │   │   ├── app.js                              # Main application
@@ -834,23 +900,48 @@ fhevm-react-template/
 │   │   ├── PrivateFreightBidding.mp4           # Demo video
 │   │   ├── Blockchain Transaction Evidence.png # Transaction proof
 │   │   └── vercel.json                         # Deployment config
+│   ├── PrivateFreightBidding/                  # Alternative deployment
 │   └── nextjs/                                 # Production Next.js template
 │       ├── app/                                # Next.js 14 App Router
 │       │   ├── layout.tsx                      # Root layout
-│       │   ├── page.tsx                        # Main page with SDK demo
+│       │   ├── page.tsx                        # Main page with complete demo
 │       │   ├── globals.css                     # Global styles
-│       │   └── api/                            # API routes
-│       │       ├── fhe/                        # FHE operations endpoints
-│       │       └── keys/                       # Key management API
+│       │   └── api/                            # API Routes
+│       │       ├── fhe/
+│       │       │   ├── route.ts                # FHE operations
+│       │       │   ├── encrypt/route.ts        # Encryption API
+│       │       │   ├── decrypt/route.ts        # Decryption API
+│       │       │   └── compute/route.ts        # Computation API
+│       │       └── keys/route.ts               # Key management
 │       ├── components/                         # React components
 │       │   ├── ui/                             # Base UI components
+│       │   │   ├── Button.tsx
+│       │   │   ├── Input.tsx
+│       │   │   └── Card.tsx
 │       │   ├── fhe/                            # FHE-specific components
+│       │   │   ├── FHEProvider.tsx             # Context provider
+│       │   │   ├── EncryptionDemo.tsx          # Encryption demo
+│       │   │   ├── ComputationDemo.tsx         # Computation demo
+│       │   │   └── KeyManager.tsx              # Key management UI
 │       │   └── examples/                       # Use case examples
+│       │       ├── BankingExample.tsx          # Financial use case
+│       │       └── MedicalExample.tsx          # Healthcare use case
 │       ├── lib/                                # Utility libraries
-│       │   ├── fhe/                            # FHE integration modules
+│       │   ├── fhe/                            # FHE integration
+│       │   │   ├── client.ts                   # Client operations
+│       │   │   ├── server.ts                   # Server operations
+│       │   │   ├── keys.ts                     # Key management
+│       │   │   └── types.ts                    # Type definitions
 │       │   └── utils/                          # Helper functions
+│       │       ├── security.ts                 # Security utilities
+│       │       └── validation.ts               # Validation helpers
 │       ├── hooks/                              # Custom React hooks
+│       │   ├── useFHE.ts                       # Main FHE hook
+│       │   ├── useEncryption.ts                # Encryption hook
+│       │   └── useComputation.ts               # Computation hook
 │       ├── types/                              # TypeScript type definitions
+│       │   ├── fhe.ts                          # FHE types
+│       │   └── api.ts                          # API types
 │       ├── package.json                        # Dependencies
 │       ├── tsconfig.json                       # TypeScript config
 │       ├── next.config.js                      # Next.js config
@@ -858,7 +949,7 @@ fhevm-react-template/
 ├── docs/
 │   ├── API.md                                  # API reference
 │   ├── QUICKSTART.md                           # Quick start guide
-│   └── EXAMPLES.md                             # Example showcase
+│   └── EXAMPLES.md                             # Complete example documentation
 ├── README.md                                   # This file (main docs)
 └── package.json                                # Monorepo root
 ```
