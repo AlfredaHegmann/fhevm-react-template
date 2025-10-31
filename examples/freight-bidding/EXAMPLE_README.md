@@ -128,7 +128,7 @@ A revolutionary freight bidding platform where **bid prices remain encrypted** t
 ### Project Structure
 
 ```
-D:\zamadapp\dapp140\
+freight-bidding/
 ├── contracts/
 │   ├── PrivateFreightBidding.sol              # Standard version
 │   └── PrivateFreightBiddingEnhanced.sol      # FHE-enhanced version

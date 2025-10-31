@@ -6,6 +6,7 @@ A revolutionary blockchain-based freight bidding system built with Fully Homomor
 
 **Platform URL**: [https://private-freight-bidding.vercel.app/](https://private-freight-bidding.vercel.app/)
 
+ 
 
 **Smart Contract Address**: `0x2E7B5f277595e3F1eeB9548ef654E178537cb90E`
 
